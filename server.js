@@ -17,7 +17,7 @@ const prompt = () => {
           "add a department",
           "add a role",
           "add an employee",
-          "update and employee role",
+          "update employee",
           "view all departments",
         ],
       },
@@ -39,19 +39,17 @@ const prompt = () => {
 
       if (choice === "add a department") {
         // add_a_role();
-        addDepartment()
+        addDepartment();
       }
 
       if (choice == "add a role") {
         addRole();
       }
       if (choice == "add an employee") {
-        console.log("and an employee");
-        // add_an_employee();
+        addEmployee();
       }
-      if (choice == "update an employee role")
-      {
-        console.log("update an employee");
+      if (choice == "update employee") {
+        updateEmployee();
       }
     })
     .catch((error) => {
@@ -99,10 +97,12 @@ function addDepartment() {
       },
     ])
     .then((deparment) => {
-      db.promise().query("insert into department set ?", deparment).then (response => {
-        console.log("department added")
-        viewDepartments()
-      })
+      db.promise()
+        .query("insert into department set ?", deparment)
+        .then((response) => {
+          console.log("department added");
+          viewDepartments();
+        });
     });
 }
 
@@ -118,20 +118,20 @@ function addRole() {
         type: "input",
         name: "department_id",
         message: "what is the deparment id",
-        
       },
       {
         type: "input",
         name: "salary",
         message: "what is the salary",
-
       },
     ])
     .then((role) => {
-      db.promise().query("insert into role set ?", role).then (()=> {
-        console.log("role added")
-        view_all_roles()
-      })
+      db.promise()
+        .query("insert into role set ?", role)
+        .then(() => {
+          console.log("role added");
+          view_all_roles();
+        });
     });
 }
 
@@ -147,25 +147,60 @@ function addEmployee() {
         type: "input",
         name: "last_name",
         message: "what is the last name",
-        
       },
       {
         type: "input",
         name: "role_id",
         message: "what is the role id",
-
       },
       {
-        type:"input",
+        type: "input",
         name: "manager_id",
         message: "what is the managers id",
       },
     ])
     .then((employee) => {
-      db.promise().query("insert into employee set ?", employee).then (()=> {
-        console.log("employee added")
-        showEmployee()
-      })
+      db.promise()
+        .query("insert into employee set?", employee)
+        .then(() => {
+          console.log("employee added");
+          prompt()
+        });
+    });
+}
+
+function updateEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "First name of who  you want to update?",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "what is the last name",
+      },
+      {
+        type: "input",
+        name: "role_id",
+        message: "what is the role id",
+      },
+      {
+        type: "input",
+        name: "manager_id",
+        message: "what is the managers id",
+      },
+    ])
+    .then((employee) => {
+      db.promise()
+        .query(`update employee set last_name= '${employee.last_name}', role_id= ${employee.role_id}, manager_id= ${employee.manager_id}
+        WHERE first_name='${employee.first_name}'`)
+        .then(() => {
+          console.log("employee updated");
+         prompt()
+        });
     });
 }
 
